@@ -63,7 +63,7 @@ def update_project(project_id):
         "message": f'there is no project with id {project_id}'
     }), 404
 
-    if current_user != project.user_id:
+    if int(current_user) != project.user_id:
         return jsonify({
             "message":'You do not have permission to edit this project'
         }), 403
@@ -94,7 +94,7 @@ def delete_project(project_id):
         "message": f'there is no project with id {project_id}'
     }), 404
 
-    if current_user != project.user_id:
+    if int(current_user) != project.user_id:
         return jsonify({
             "message":'You do not have permission to delete this project'
         }), 403

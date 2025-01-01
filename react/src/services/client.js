@@ -28,8 +28,17 @@ const login = async credential => {
 }
 
 const logout = async () => {
-    const response = await axios.post(`${baseUrl}/logout`, null, config)
-    return response.data
+    if (!token) {
+        throw new Error('Token de logout não fornecido!');
+    }
+
+    try {
+        const response = await axios.post(`${baseUrl}/logout`, {}, config);
+        return response.data;
+    } catch (error) {
+        console.error("Erro no logout:", error);
+        throw error;
+    }
 }
 
 const refreshAccessToken = async () => {

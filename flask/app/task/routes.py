@@ -66,39 +66,38 @@ def update_task(task_id):
 
     if not task:
         return jsonify({
-        "success": False,
-        "message": f'there is no task with id {task_id}'
-    }), 404
+            "success": False,
+            "message": f'There is no task with id {task_id}'
+        }), 404
 
-    if current_user != task.user_id:
+    if int(current_user) != task.user_id:
         return jsonify({
-            "message":'You do not have permission to edit this task'
+            "message": 'You do not have permission to edit this task'
         }), 403
-    
-    title= data.get("title"),
+
+    # Atualizar os dados da tarefa
+    title = data.get("title")
     description = data.get("description")
     due_date = data.get("due_date")
-    is_done = data.get("is_done"),
+    is_done = data.get("is_done")
     project_id = data.get("project_id")
 
-    
+    if not title or not project_id or not due_date or is_done is None:
+        return jsonify({'message': 'Incomplete data'}), 422
+
     task.title = title
     task.description = description
     task.due_date = due_date
-    task.is_done =is_done
-    task.user_id = current_user
+    task.is_done = is_done
     task.project_id = project_id
 
-    if not title or not project_id or not due_date or not is_done:
-        return jsonify({'message': 'incomplete data'}), 422
-
     db.session.commit()
-    
+
     response = jsonify({
-            "success": True,
-            "message" : f'task with id {task_id} has been changed',
-            "data" : task.serialize()
-        })
+        "success": True,
+        "message": f'Task with id {task_id} has been changed',
+        "data": task.serialize()
+    })
 
     return response, 200
     
@@ -116,7 +115,7 @@ def delete_task(task_id):
         "message": f'there is no task with id {task_id}'
     }), 404
 
-    if current_user != task.user_id:
+    if int(current_user) != task.user_id:
         return jsonify({
             "message":'You do not have permission to delete this task'
         }), 403

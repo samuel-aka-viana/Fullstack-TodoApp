@@ -1,48 +1,58 @@
 version: '3'
+
 services:
     flaskapp:
-      build:
-        context: ./flask
-        dockerfile: Dockerfile
+      image: pentos/todo-back:latest
       container_name: todo_flask
-      environment:
-      - SQLALCHEMY_DATABASE_URI=${SQLALCHEMY_DATABASE_URI}
-      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      env_file:
+        - .env
       ports:
         - 5000:5000
-      depends_on: 
-        - postgres
+      healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+        interval: 30s
+        timeout: 10s
+        retries: 3
+      restart: unless-stopped
+      depends_on:
+        postgres:
+          condition: service_healthy
       networks:
-        - mynetworks
-    
+        - fpf_network
+
     reactapp:
-      build: 
-        context: ./react
-        dockerfile: Dockerfile
+      image: pentos/todo-front:latest
       container_name: todo_react
       ports:
-        - 80:80
+        - '80:80'
+      restart: unless-stopped
       depends_on:
         - flaskapp
       networks:
-        - mynetworks
+        - fpf_network
 
     postgres:
       image: postgres:latest
       container_name: todo_postgres
+      env_file:
+        - .env
       ports:
-        - 5440:5432
-      environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
+        - '5432:5432'
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U postgres"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
       volumes:
         - postgres-volume:/var/lib/postgresql/data
         - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
-      networks: 
-        - mynetworks
+      restart: unless-stopped
+      networks:
+        - fpf_network
 
 networks:
-  mynetworks:
+  fpf_network:
+    driver: bridge
+
 volumes:
   postgres-volume:
