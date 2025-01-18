@@ -1,0 +1,67 @@
+# ConfigMap da API
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: todo-app-config
+  namespace: default
+data:
+  FLASK_ENV: "production"
+  FLASK_APP: "app.py"
+  SQLALCHEMY_DATABASE_URI: "postgresql://postgres:fpf1212@postgres-service:5432/fpf"
+  JWT_SECRET_KEY: "fpf@1212"
+---
+# Service da API
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-service
+  namespace: default
+spec:
+  selector:
+    app: flask-api
+  type: NodePort
+  ports:
+    - port: 5000
+      targetPort: 5000
+      nodePort: 32101
+---
+# Deployment da API
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-api-flask
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flask-api
+  template:
+    metadata:
+      labels:
+        app: flask-api
+    spec:
+      containers:
+        - name: flask-api
+          image: pentos/todo-back:latest
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+          ports:
+            - containerPort: 5000
+          envFrom:
+            - configMapRef:
+                name: todo-app-config
+            - secretRef:
+                name: todo-app-secrets
+          volumeMounts:
+            - name: flask-volume
+              mountPath: /app/data
+      volumes:
+        - name: flask-volume
+          persistentVolumeClaim:
+            claimName: postgres-pvc

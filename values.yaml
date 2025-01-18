@@ -1,0 +1,9 @@
+ebpf:
+  enabled: true
+
+falco:
+  jsonOutput: true
+  timeFormatISO8601: true
+
+falcosidekick:
+  enabled: true
