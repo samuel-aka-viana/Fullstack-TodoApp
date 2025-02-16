@@ -1,11 +1,12 @@
 from app import create_app
-from flask import render_template
+from hypercorn.asyncio import serve
+import asyncio
+from config import hypercorn_config
 
 app = create_app()
 
-# @app.route("/")
-# def serve():
-#     return render_template("index.html")
+async def main():
+    await serve(app, hypercorn_config)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=True)
+    asyncio.run(main())

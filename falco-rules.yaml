@@ -1,7 +1,5 @@
-customRules:
-  my_rules: |-
-    - rule: Shell execution detected in a container
-      desc: Detect shell commands (sh, bash) being executed in any container
-      condition: container.id != host and evt.type in (execve) and proc.name in (sh, bash)
-      output: Shell executed in container (user=%user.name command=%proc.cmdline container=%container.name)
-      priority: CRITICAL
+- rule: Shell execution detected in a container
+  desc: Detect shell commands (sh, bash) being executed in any container
+  condition: container.id != host and evt.type in (execve) and proc.name in (sh, bash)
+  output: Shell executed in container (user=%user.name command=%proc.cmdline container=%container.name)
+  priority: CRITICAL

@@ -1,0 +1,20 @@
+# Usa a imagem completa (imagem maior e menos segura)
+FROM python:3.12
+
+# Define o diretório de trabalho
+WORKDIR /app
+
+# Copia todos o código antes de instalar dependências, invalidando o cache
+COPY . .
+
+# hadolint ignore=DL3013,DL3042
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install -r --no-cache-dir requirements.txt # Instala dependências sem fixar versões e como root (pode levar a quebras inesperadas)
+
+#ENV PYTHONUNBUFFERED=1  # Define variáveis de ambiente incompletas, não otimiza a execução
+
+# Expõe porta sem necessidade, já que o container pode mapear automaticamente
+EXPOSE 5000 8000
+
+# Usa o servidor Flask nativo, que não é seguro para produção
+CMD ["flask", "run"]

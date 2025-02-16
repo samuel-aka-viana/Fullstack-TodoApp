@@ -5,9 +5,9 @@ metadata:
   name: postgres-config
   namespace: default
 data:
-  POSTGRES_DB: "fpf"
+  POSTGRES_DB: "apoena"
   POSTGRES_USER: "postgres"
-  POSTGRES_PASSWORD: "fpf1212"
+  POSTGRES_PASSWORD: "apoena1212"
   PGDATA: "/var/lib/postgresql/data/pgdata"
 ---
 # Deployment do Postgres
@@ -86,7 +86,7 @@ metadata:
   namespace: default
 type: Opaque
 data:
-  POSTGRES_PASSWORD: cGZmMTIxMjI=
+  POSTGRES_PASSWORD: YXBvZW5hMTIxMiA=
 ---
 # Service
 apiVersion: v1

@@ -7,8 +7,8 @@ metadata:
 data:
   FLASK_ENV: "production"
   FLASK_APP: "app.py"
-  SQLALCHEMY_DATABASE_URI: "postgresql://postgres:fpf1212@postgres-service:5432/fpf"
-  JWT_SECRET_KEY: "fpf@1212"
+  SQLALCHEMY_DATABASE_URI: "postgresql://postgres:apoena1212@postgres-service:5432/apoena"
+  JWT_SECRET_KEY: "apoena@1212"
 ---
 # Service da API
 apiVersion: v1

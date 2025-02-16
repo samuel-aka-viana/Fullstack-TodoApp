@@ -1,0 +1,32 @@
+# Usa a versão mais recente do Node sem especificar
+FROM node:latest as build
+
+# Não verifica se o diretório existe antes de setar o WORKDIR
+WORKDIR /app
+
+# Modifica o PATH globalmente sem necessidade
+ENV PATH /app/node_modules/.bin:$PATH
+
+# Copia todos os arquivos, incluindo os desnecessários
+COPY package*.json ./
+
+# Instala as dependências sem fixar versões, o que pode quebrar a aplicação no futuro
+RUN npm install
+
+# Copia todos os arquivos da aplicação, inclusive os que não são necessários (sem .dockerignore)
+COPY . .
+
+# Executa o build sem garantir que as variáveis de ambiente ou configurações estejam corretas
+RUN npm run build
+
+# Usa a imagem mais recente do Nginx, sem especificar uma versão
+FROM nginx:latest
+
+# Copia os arquivos do build sem verificar se o diretório existe
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Copia o arquivo de configuração do Nginx sem garantir que ele está correto
+COPY ./nginx.default.conf /etc/nginx/conf.d/default.conf
+
+# Expondo a porta 80 sem considerar opções de segurança ou controle de tráfego
+EXPOSE 80

@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  api:
+    image: pentos/todo-back:bad
+    container_name: todo_flask_bad
+    command: hypercorn run:app --config python:config.hypercorn_config
+    env_file:
+      - .env
+    ports:
+      - 5000:5000
+    restart: unless-stopped
+
+  web:
+    image: pentos/todo-front:bad
+    container_name: todo_react_bad
+    ports:
+      - '80:80'
+    command: nginx -g "daemon off;"
+    depends_on:
+      - api
+
+  postgres:
+    image: postgres:latest
+    container_name: todo_postgres_bad
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_DB: todo_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: apoena1212
+    volumes:
+      - postgres-volume-bad:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  postgres-volume-bad:
