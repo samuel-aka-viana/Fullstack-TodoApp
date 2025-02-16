@@ -43,7 +43,8 @@ spec:
     spec:
       containers:
         - name: flask-api
-          image: pentos/todo-back:latest
+          image: pentos/todo-api:good
+          command: ["python", "run.py"]
           resources:
             requests:
               memory: "128Mi"

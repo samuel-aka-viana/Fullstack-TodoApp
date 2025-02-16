@@ -43,7 +43,7 @@ spec:
     spec:
       containers:
         - name: react-frontend
-          image: pentos/todo-front:latest
+          image: pentos/todo-front:good
           resources:
             requests:
               memory: "64Mi"

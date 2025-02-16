@@ -1,6 +1,6 @@
 services:
   api:
-    image: pentos/todo-api:bad
+    image: pentos/todo-api:good
     container_name: todo_flask
     command: python run.py
     env_file:
@@ -20,7 +20,7 @@ services:
       - app_network
 
   front:
-    image: pentos/todo-front:bad
+    image: pentos/todo-front:good
     container_name: todo_react
     ports:
       - '80:80'
