@@ -1,8 +1,8 @@
 services:
-  flaskapp:
-    image: pentos/todo-back:latest
+  api:
+    image: pentos/todo-api:bad
     container_name: todo_flask
-    command: hypercorn run:app --config python:config.hypercorn_config
+    command: python run.py
     env_file:
       - .env
     ports:
@@ -19,14 +19,14 @@ services:
     networks:
       - app_network
 
-  reactapp:
-    image: pentos/todo-front:latest
+  front:
+    image: pentos/todo-front:bad
     container_name: todo_react
     ports:
       - '80:80'
     restart: unless-stopped
     depends_on:
-      - flaskapp
+      - api
     networks:
       - app_network
 

@@ -1,5 +1,5 @@
 # Usa uma versão específica do Node para evitar mudanças inesperadas
-FROM node:22.10-alpine as build
+FROM node:22.10-alpine AS build
 
 # Define o diretório de trabalho
 WORKDIR /app
@@ -7,8 +7,8 @@ WORKDIR /app
 # Copia apenas os arquivos essenciais primeiro para otimizar o cache de camadas
 COPY package*.json ./
 
-# Instala as dependências com versões fixas para evitar quebras no futuro
-RUN npm install --production --frozen-lockfile
+# Remove --production flag to install all dependencies including dev dependencies
+RUN npm install --frozen-lockfile
 
 # Copia o restante dos arquivos da aplicação
 COPY . .
@@ -31,5 +31,5 @@ COPY ./nginx.default.conf /etc/nginx/conf.d/default.conf
 # Expõe a porta, mas adiciona uma variável de ambiente para controlar o ambiente de execução
 ENV NODE_ENV=production
 
-# Expõe a porta 80 para acesso
+# Expõe a porta 80 para acesso (fix the syntax)
 EXPOSE 80

@@ -1,5 +1,5 @@
 # Usa a versão mais recente do Node sem especificar
-FROM node:latest as build
+FROM node:latest AS build
 
 # Não verifica se o diretório existe antes de setar o WORKDIR
 WORKDIR /app

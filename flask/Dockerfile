@@ -1,40 +1,24 @@
-#FROM python:3.12-slim
-#
-#WORKDIR /app
-#
-#COPY requirements.txt .
-#
-#RUN pip install --no-cache-dir --upgrade pip==25.0.1 && \
-#    pip install --no-cache-dir -r requirements.txt
-#
-#COPY . .
-#
-#ENV PYTHONUNBUFFERED=1 \
-#    PYTHONDONTWRITEBYTECODE=1
-#
-#RUN groupadd -r appgroup && useradd -r -g appgroup appuser
-#USER appuser
-#
-#EXPOSE 5000
-#
-# Usa a imagem completa (imagem maior e menos segura)
-FROM python:3.12
+FROM python:3.12-slim
 
-# Define o diretório de trabalho
 WORKDIR /app
 
-# Copia todos o código antes de instalar dependências, invalidando o cache
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    gcc \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd -r appgroup && useradd -r -g appgroup appuser
+
+COPY requirement.txt .
+
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirement.txt
+
 COPY . .
 
-RUN pip install --upgrade pip
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
 
-RUN pip install -r requirements.txt # Instala dependências sem fixar versões e como root (pode levar a quebras inesperadas)
+USER appuser
 
-#ENV PYTHONUNBUFFERED=1  # Define variáveis de ambiente incompletas, não otimiza a execução
-
-# Expõe porta sem necessidade, já que o container pode mapear automaticamente
-EXPOSE 5000 8000
-
-# Usa o servidor Flask nativo, que não é seguro para produção
-CMD ["flask", "run"]
+EXPOSE 5000
 
