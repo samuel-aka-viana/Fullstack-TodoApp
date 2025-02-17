@@ -1,0 +1,22 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: audit-resource-limits
+spec:
+  validationFailureAction: audit
+  background: true
+  rules:
+    - name: audit-resource-limits
+      match:
+        resources:
+          kinds:
+            - Pod
+      validate:
+        message: "Todos os Pods devem ter limites de CPU e memória definidos."
+        pattern:
+          spec:
+            containers:
+              - resources:
+                  limits:
+                    memory: "?*"
+                    cpu: "?*"

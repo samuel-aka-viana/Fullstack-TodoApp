@@ -1,0 +1,26 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: block-shell-access
+spec:
+  validationFailureAction: enforce
+  background: false
+  rules:
+    - name: block-shell-access
+      match:
+        resources:
+          kinds:
+            - Pod
+          names:
+            - "todo-api-flask"  # Nome do Pod da API
+      validate:
+        message: "Execução de shell no Pod da API não é permitida."
+        pattern:
+          spec:
+            containers:
+              - securityContext:
+                  runAsNonRoot: true
+                  capabilities:
+                    drop: ["NET_RAW", "NET_ADMIN", "SYS_ADMIN"]
+                  allowPrivilegeEscalation: false
+                  readOnlyRootFilesystem: true

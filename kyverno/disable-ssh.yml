@@ -1,0 +1,21 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: disallow-ssh-access
+spec:
+  validationFailureAction: enforce
+  rules:
+    - name: disallow-ssh-access
+      match:
+        resources:
+          kinds:
+            - Pod
+      validate:
+        message: "Contêineres não podem ter acesso SSH ou executar comandos de shell."
+        pattern:
+          spec:
+            containers:
+              - securityContext:
+                  capabilities:
+                    drop: ["ALL"]
+                  allowPrivilegeEscalation: false

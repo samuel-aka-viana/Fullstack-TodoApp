@@ -1,0 +1,40 @@
+apiVersion: kyverno.io/v1
+
+# Tipo de recurso: "ClusterPolicy" aplica-se a todo o cluster
+kind: ClusterPolicy
+
+metadata:
+  name: enforce-pod-resources
+
+spec:
+  # - "enforce": Bloqueia a criação/atualização do Pod.
+  # - "audit": Permite a criação/atualização, mas registra a violação.
+  validationFailureAction: enforce
+
+  rules:
+    - name: validate-resource-limits
+      match:
+        resources:
+          kinds:
+            - Pod
+      validate:       # Define as condições de validação
+        message: "Todos os Pods devem ter limites de CPU e memória definidos."
+        pattern:         # Padrão YAML que o recurso deve seguir
+          spec:
+            containers:
+              - resources:
+                  limits:                      # "?*" significa que o campo deve existir, mas pode ter qualquer valor
+                    memory: "?*"
+                    cpu: "?*"
+
+    - name: add-env-label
+      # Define os recursos aos quais a regra se aplica (neste caso, Pods)
+      match:
+        resources:
+          kinds:
+            - Pod
+      mutate:        # Define as modificações a serem aplicadas aos recursos
+        patchStrategicMerge:         # Aplica um merge estratégico no recurso
+          metadata:
+            labels:               # Adiciona o label "env: production"
+              env: production

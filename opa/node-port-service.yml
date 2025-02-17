@@ -1,0 +1,19 @@
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: k8sblockpostgresnodeport
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sBlockPostgresNodePort
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package kubernetes.admission
+        violation[{"msg": msg}] {
+          input.review.object.kind == "Service"
+          input.review.object.spec.type == "NodePort"
+          input.review.object.metadata.name == "postgres-service"
+          msg := "Services for PostgreSQL cannot be of type NodePort"
+        }

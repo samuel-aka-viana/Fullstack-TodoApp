@@ -1,0 +1,18 @@
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: k8sminpvcsize
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sMinPvcSize
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8sminpvcsize
+        violation[{"msg": msg}] {
+          input.review.object.kind == "PersistentVolumeClaim"
+          input.review.object.spec.resources.requests.storage < "5Gi"
+          msg := "PersistentVolumeClaim must have a minimum size of 5Gi"
+        }

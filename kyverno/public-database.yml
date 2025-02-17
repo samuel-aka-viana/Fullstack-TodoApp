@@ -1,0 +1,19 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: block-public-postgres
+spec:
+  validationFailureAction: enforce
+  rules:
+    - name: block-public-postgres
+      match:
+        resources:
+          kinds:
+            - Service
+          names:
+            - postgres-service
+      validate:
+        message: "O serviço do PostgreSQL não pode ser exposto publicamente."
+        pattern:
+          spec:
+            type: "ClusterIP"

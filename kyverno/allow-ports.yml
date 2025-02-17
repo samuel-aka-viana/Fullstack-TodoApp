@@ -1,0 +1,18 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: validate-network-ports
+spec:
+  validationFailureAction: enforce
+  rules:
+    - name: validate-network-ports
+      match:
+        resources:
+          kinds:
+            - Service
+      validate:
+        message: "Serviços só podem usar portas seguras (80, 443, 5000, 5432)."
+        pattern:
+          spec:
+            ports:
+              - port: 80 | 443 | 5000 | 5432

@@ -1,0 +1,18 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: allow-trusted-images
+spec:
+  validationFailureAction: enforce
+  rules:
+    - name: validate-trusted-images
+      match:
+        resources:
+          kinds:
+            - Pod
+      validate:
+        message: "Apenas imagens do repositório 'pentos/' são permitidas."
+        pattern:
+          spec:
+            containers:
+              - image: "pentos/*"
